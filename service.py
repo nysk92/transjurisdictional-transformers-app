@@ -53,7 +53,8 @@ def result():
 	try:
 		query = data[data['sec']==section][['sec', 'title', 'url']].to_dict('records')[0]
 	except IndexError:
-		raise Exception('Fill in a value from the autocomplete list, e.g. "sg_9". Please click back and try again.') 
+		# raise Exception('Fill in a value from the autocomplete list, e.g. "sg_9". Please click back and try again.')
+		return render_template("indexerror.html") 
 	if law_choice == 'dataprotection':
 		result = retrieve(section, data, vectors, output_juris='eu')
 	else:
