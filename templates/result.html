@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+   <body>
+       <h1>Top Matching Legislation for</h1>
+       <h3>Provision {{query['sec']}},</h3>
+       <h3> {{query['title']}}</h3>
+       <p><a href=//{{ query['url'] }}>{{ query['url'] }}</a></p>
+       <br>
+        {% for k, v in result.items() %}
+      <table border = 1>
+          <p>Result {{ k }}</p>        
+            {% for key, value in v.items() %}
+                {% if key == "url" -%}
+                    <tr>
+                        <th> {{ key }} </th>
+                        <td> <a href=//{{ value }}>{{ value }}</a> </td>
+                    </tr>
+                {% else -%}
+                    <tr>
+                        <th> {{ key }} </th>
+                        <td> {{ value }} </td>
+                    </tr>
+                {% endif %}
+            {% endfor %}            
+         {% endfor %}
+      </table>
+      <br>
+      <p>Vector Choice: {{vec_choice}}</p>
+      <p><a href=/>Home</a></p>
+   </body>
+</html>

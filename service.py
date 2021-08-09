@@ -5,6 +5,16 @@ import json
 from sklearn.metrics.pairwise import cosine_similarity
 
 app = Flask(__name__)
+DEFAULT_CONFIG = 'config.json'
+
+def load_config(filename=None):
+	if not filename:
+		filename=DEFAULT_CONFIG
+	with open(filename) as f:
+		config = json.load(f)
+	return config
+
+config = load_config()
 
 @app.route('/')
 def index():
@@ -22,34 +32,35 @@ def trademarks():
 def dataprotection():
 	return render_template('dataprotection.html')
 
-@app.route('/<law>/<vec>', methods=["POST", "GET"])
+@app.route('/<law>/<vec>', methods=["GET"])
 def autocomplete(law, vec):
-	if request.method == "GET":
-		data = pd.read_csv('data/' + config[law]['data'])
-		input_secs = [sec for sec in data['sec'] if 'sg' in sec]
-		sections = input_secs
-		return render_template("autocomplete.html", sections=sections, vec=vec, law=law)
+	data = pd.read_csv(config[law]['data'])
+	input_secs = [sec for sec in data['sec'] if 'sg' in sec]
+	sections = input_secs
+	return render_template("autocomplete.html", sections=sections, vec=vec, law=law)
+	
 
-@app.route('/result', methods = ['POST', 'GET'])
+@app.route('/result', methods = ['POST'])
 def result():
-	if request.method == 'POST':
-		result = dict(request.form)
-		section = result['Section']
-		vec_choice = result['Vec']
-		law_choice = result['Law']
-		vector_path = 'data/' + config[law_choice]['vectors'][vec_choice]
-		vectors = np.load(vector_path)
-		data_path = 'data/' + config[law_choice]['data']
-		data = pd.read_csv(data_path)
-		query = data[data['sec']==section][['sec', 'title', 'url']].to_dict('records')[0] 
-		if law_choice == 'dataprotection':
-			result = retrieve(section, data, vectors, output_juris='eu')
-		else:
-			result = retrieve(section, data, vectors)
-		return render_template("result.html", result=result, query=query, vec_choice=vec_choice)
+	result = dict(request.form)
+	section = result['Section']
+	vec_choice = result['Vec']
+	law_choice = result['Law']
+	vector_path = config[law_choice]['vectors'][vec_choice]
+	vectors = np.load(vector_path)
+	data_path = config[law_choice]['data']
+	data = pd.read_csv(data_path)
+	try:
+		query = data[data['sec']==section][['sec', 'title', 'url']].to_dict('records')[0]
+	except IndexError:
+		raise Exception('Fill in a value from the autocomplete list, e.g. "sg_9". Please click back and try again.') 
+	if law_choice == 'dataprotection':
+		result = retrieve(section, data, vectors, output_juris='eu')
+	else:
+		result = retrieve(section, data, vectors)
+	return render_template("result.html", result=result, query=query, vec_choice=vec_choice)
 
-with open('data/config.json') as f:
-	config = json.load(f)
+
 
 def retrieve(input_sec, data, vectors, output_juris='uk', k=5):
     vectors = pd.DataFrame(vectors, index=data['sec'])
@@ -63,11 +74,3 @@ def retrieve(input_sec, data, vectors, output_juris='uk', k=5):
     result_secs = candidate_vecs.iloc[result_ids].index
     return {i+1:data[data['sec']==res][['sec', 'title', 'url']].to_dict('records')[0] 
             for i,res in enumerate(result_secs)}
-
-
-"""
-References
-Buttons: https://kanchanardj.medium.com/redirecting-to-another-page-with-button-click-in-python-flask-c112a2a2304c
-Autcomplete field: https://www.geeksforgeeks.org/autocomplete-input-suggestion-using-python-and-flask/
-Forms: https://www.tutorialspoint.com/flask/flask_sending_form_data_to_template.htm
-"""

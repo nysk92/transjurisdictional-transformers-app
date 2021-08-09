@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Section Select</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js">  
+    </script>  
+  
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.js">  
+    </script>  
+
+    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/ui-lightness/jquery-ui.css"
+        rel="stylesheet" type="text/css" />  
+</head>
+<body>
+    <h1>Select Input SG Section</h1>
+
+    <form action = "http://localhost:5000/result" method = "POST">
+
+        <input type="hidden" id="vec" name=Vec value="{{ vec }}">
+        <input type="hidden" id="law" name=Law value="{{ law }}">
+        <input type="text" id="tags" name=Section>
+    
+        <script>
+    $( function() {
+        var availableTags = [
+            {% for section in sections %}
+                "{{section}}",
+            {% endfor %}
+        ];
+        $( "#tags" ).autocomplete({
+        source: availableTags
+        });
+    } );
+    </script>
+
+        <p><input type = "submit" value = "submit" /></p>
+     </form>
+
+     <br>
+     <p><a href=/>Home</a></p>
+    <!-- form use reference: https://www.tutorialspoint.com/flask/flask_sending_form_data_to_template.htm -->
+    <!-- autocomplete use reference: https://www.geeksforgeeks.org/autocomplete-input-suggestion-using-python-and-flask/ -->    
+</body>
+</html>

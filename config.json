@@ -1,0 +1,29 @@
+{
+    "copyright":{
+        "data": "data/copyright/sg_uk_copyright.csv",
+        "vectors": {
+            "tfidf": "data/copyright/sg_uk_vecs_tfidf.npy",
+            "ft": "data/copyright/sg_uk_vecs_ft.npy",
+            "bert": "data/copyright/cp_sg_uk_vecs_bert_mlm.npy"
+        }
+    },
+
+    "trademarks":{
+        "data": "data/trademarks/sg_uk_tm.csv",
+        "vectors": {
+            "tfidf": "data/trademarks/tm_sg_uk_vecs_tfidf.npy",
+            "ft": "data/trademarks/tm_sg_uk_vecs_ft.npy",
+            "bert": "data/trademarks/tm_sg_uk_vecs_bert_mlm.npy"
+        }
+    },
+
+    "dataprotection":{
+        "data": "data/dataprotection/sg_eu.csv",
+        "vectors": {
+            "tfidf": "data/dataprotection/sg_eu_vecs_tfidf.npy",
+            "ft": "data/dataprotection/sg_eu_vecs_ft_test.npy",
+            "bert": "data/dataprotection/sg_eu_vecs_bert_mlm.npy"
+        }
+    }
+
+}
